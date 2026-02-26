@@ -1,0 +1,170 @@
+"use client";
+
+import {
+   createContext,
+   useContext,
+   useState,
+   useEffect,
+   ReactNode,
+} from "react";
+import API from "@/lib/axios";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+
+export interface User {
+   _id: string;
+   username: string;
+   email: string;
+   createdAt?: string;
+   updatedAt?: string;
+}
+
+interface AuthContextType {
+   user: User | null;
+   loading: boolean; // refreshUser loading
+   authLoading: boolean; // login/signup button loading
+   isAuthenticated: boolean;
+   login: (identifier: string, password: string) => Promise<void>;
+   signup: (username: string, email: string, password: string) => Promise<void>;
+   logout: () => Promise<void>;
+   refreshUser: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+interface AuthProviderProps {
+   children: ReactNode;
+}
+
+// Type for login/signup API response
+interface AuthResponse {
+   accessToken: string;
+   user: User;
+}
+
+// Axios error type guard
+const isAxiosError = (err: unknown): err is AxiosError<{ message: string }> =>
+   (err as AxiosError)?.isAxiosError !== undefined;
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+   const [user, setUser] = useState<User | null>(null);
+   const [loading, setLoading] = useState(true);
+   const [authLoading, setAuthLoading] = useState(false);
+
+   useEffect(() => {
+      refreshUser().finally(() => setLoading(false));
+   }, []);
+
+   const login = async (identifier: string, password: string) => {
+      setAuthLoading(true);
+      try {
+         const isEmail = identifier.includes("@");
+         const body = isEmail
+            ? { email: identifier, password }
+            : { username: identifier, password };
+
+         const res = await API.post<{ data: AuthResponse }>(
+            "/users/login",
+            body,
+         );
+         const data = res.data.data;
+
+         localStorage.setItem("accessToken", data.accessToken);
+         localStorage.setItem("userId", data.user._id);
+         setUser(data.user);
+         toast.success("Logged in successfully!");
+      } catch (err: unknown) {
+         let msg = "Invalid credentials";
+
+         if (isAxiosError(err)) {
+            msg = err.response?.data?.message || msg;
+         } else if (err instanceof Error) {
+            msg = err.message;
+         }
+
+         throw new Error(msg);
+      } finally {
+         setAuthLoading(false);
+      }
+   };
+
+   const signup = async (username: string, email: string, password: string) => {
+      setAuthLoading(true);
+      try {
+         const res = await API.post<{ data: AuthResponse }>("/users/register", {
+            username,
+            email,
+            password,
+         });
+         const data = res.data.data;
+
+         localStorage.setItem("accessToken", data.accessToken);
+         localStorage.setItem("userId", data.user._id);
+         setUser(data.user);
+         toast.success("Account created successfully!");
+      } catch (err: unknown) {
+         let msg = "Signup failed";
+
+         if (isAxiosError(err)) {
+            msg = err.response?.data?.message || msg;
+         } else if (err instanceof Error) {
+            msg = err.message;
+         }
+
+         throw new Error(msg);
+      } finally {
+         setAuthLoading(false);
+      }
+   };
+
+   const logout = async () => {
+      try {
+         await API.post("/users/logout");
+      } catch {
+         toast.error("Logout failed");
+      } finally {
+         localStorage.removeItem("accessToken");
+         localStorage.removeItem("userId");
+         setUser(null);
+         toast.success("Logged out successfully!");
+      }
+   };
+
+   const refreshUser = async () => {
+      setUser(null);
+      try {
+         const res = await API.get<{ data: User }>("/users/current-user");
+         const userData = res.data.data;
+         setUser(userData);
+         if (userData?._id) {
+            localStorage.setItem("userId", userData._id);
+         }
+      } catch {
+         localStorage.removeItem("accessToken");
+         localStorage.removeItem("userId");
+      }
+   };
+
+   return (
+      <AuthContext.Provider
+         value={{
+            user,
+            loading,
+            authLoading,
+            isAuthenticated: !!user,
+            login,
+            signup,
+            logout,
+            refreshUser,
+         }}
+      >
+         {children}
+      </AuthContext.Provider>
+   );
+};
+
+export const useAuth = (): AuthContextType => {
+   const context = useContext(AuthContext);
+   if (!context) throw new Error("useAuth must be used within AuthProvider");
+   return context;
+};
