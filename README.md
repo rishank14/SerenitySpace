@@ -20,15 +20,22 @@
   <img src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
 </p>
 
+<p align="center">
+  <a href="https://serenity-space-lac.vercel.app">
+    <img src="https://img.shields.io/badge/Live_Demo-Visit-8B5CF6?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+  </a>
+</p>
+
 ---
 
 ## Table of Contents
 
 - [About](#about)
+- [Demo](#demo)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
-- [Screenshots](#screenshots)
+- [License](#license)
 - [Author](#author)
 
 ---
@@ -45,6 +52,17 @@ It's not just another journaling app — it's a thoughtfully designed emotional 
 - **An empathetic AI companion** powered by Google Gemini
 
 Every pixel, every animation, and every backend decision was made with one goal: **make the user feel safe, heard, and supported.**
+
+---
+
+## Demo
+
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=0SwPKFJsP1k">
+    <img src="screenshots/LandingPage.png" alt="SerenitySpace Demo Video" width="800" />
+  </a>
+  <br/><em>▶️ Click to watch the full demo on YouTube</em>
+</p>
 
 ---
 
@@ -162,7 +180,7 @@ Every pixel, every animation, and every backend decision was made with one goal:
 
 - **Node.js** >= 18
 - **MongoDB** Atlas
-- **Google Gemini API Key** 
+- **Google Gemini API Key**
 
 ### 1. Clone the Repository
 
@@ -222,44 +240,6 @@ npm run dev
 The app will be running at `http://localhost:3000`
 
 ---
-
-<!-- ## Screenshots
-
-> Add your screenshots here!
-
-<!--
-<p align="center">
-  <img src="screenshots/landing.png" alt="Landing Page" width="800" />
-  <br/><em>Landing Page</em>
-</p>
-
-<p align="center">
-  <img src="screenshots/dashboard.png" alt="Dashboard" width="800" />
-  <br/><em>Dashboard</em>
-</p>
-
-<p align="center">
-  <img src="screenshots/vent-room.png" alt="Vent Room" width="800" />
-  <br/><em>Vent Room</em>
-</p>
-
-<p align="center">
-  <img src="screenshots/reflections.png" alt="Reflections" width="800" />
-  <br/><em>Reflection Space</em>
-</p>
-
-<p align="center">
-  <img src="screenshots/vault.png" alt="Message Vault" width="800" />
-  <br/><em>Message Vault with real-time delivery</em>
-</p>
-
-<p align="center">
-  <img src="screenshots/chatbot.png" alt="SerenityBot" width="400" />
-  <br/><em>SerenityBot AI Companion</em>
-</p>
--->
-
---- -->
 
 ## License
 
